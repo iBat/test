@@ -1,0 +1,24 @@
+{
+  "name": "2do2go",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "node-sass-middleware": "0.9.8",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-imports": "^1.2.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-es2017-node7": "^0.5.2"
+  }
+}
