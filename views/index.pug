@@ -1,0 +1,48 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  form(method='post')
+      .form-group
+          label(for="source") data source URL:
+          input(name="source", value='https://www.reddit.com/r/javascript/.json')#source.form-control
+      .form-group
+          | Operation
+          .radio
+              label
+                  input(type="radio", name="operation", value="sort", checked="")
+                  |  sort
+          .radio
+              label
+                  input(type="radio", name="operation", value="aggregate")
+                  |  aggregate
+      .form-group
+          | Direction
+          .radio
+              label
+                  input(type="radio", name="direction", value="asc", checked="")
+                  |  asc
+          .radio
+              label
+                  input(type="radio", name="direction", value="desc")
+                  |  desc
+      .form-group
+          | Sort By
+          each fieldName in sortableFields
+              .radio
+                  label
+                      input(type="radio", name="field", value=fieldName, checked="")
+                      |  #{fieldName}
+      .form-group
+          | Format
+          .radio
+              label
+                  input(type="radio", name="format", value="CSV", checked="")
+                  |  CSV
+          .radio
+              label
+                  input(type="radio", name="format", value="SQL")
+                  |  SQL
+      button(type="submit").btn.btn-primary Submit
