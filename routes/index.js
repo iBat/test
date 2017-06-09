@@ -9,15 +9,16 @@ const sortableFields = ['created_utc', 'score'];
 router.get('/', (req, res) => {
   res.render('index', {
       title: 'Reddit data parser',
+      outputFields,
       sortableFields
   });
 });
 
 router.post('/', async (req, res) => {
-    const { source, format, operation, direction, field } = req.body;
-    const processor = new RedditProcessor(source, format, outputFields);
+    // TODO validate
+    const processor = new RedditProcessor({ ...req.body, outputFields });
 
-    res.json(await processor.process(operation, field, direction));
+    res.send(await processor.process());
 });
 
 export { router };

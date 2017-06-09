@@ -1,25 +1,59 @@
+import fs from 'fs';
 import request from 'request-promise';
-import { pick } from 'underscore';
+import { keys, isFinite, values } from 'underscore';
 import * as strategies from './strategies';
 
 class RedditProcessor {
-    constructor(sourceUrl, outputFormat, outputFields) {
-        this.sourceUrl = sourceUrl;
-        this.outputFormat = outputFormat;
-        this.outputFields = outputFields;
+    constructor(options) {
+        this.options = options;
     }
 
-    async process(operation, ...restParams) {
-        return strategies[operation](await this.fetchData(), restParams);
+    async process() {
+        const processor = strategies[this.options.operation];
+        const rawData = processor(await this.fetchData(), this.options);
+
+        return this[`format${this.options.format}`](rawData);
     }
 
     async fetchData() {
-        const httpData = await request.get({
-            url: this.sourceUrl,
-            json: true
-        });
+        return new Promise((resolve, reject) => {
+            fs.readFile('./json.json', (err, httpData) => {
+                if(err) {
+                    return reject(err);
+                }
+                resolve(JSON.parse(httpData).data.children.map(item => item.data));
+            });
+        })
 
-        return httpData.data.children.map(item => pick(item.data, this.outputFields));
+
+        // const httpData = await request.get({
+        //     url: this.options.sourceUrl,
+        //     json: true
+        // });
+
+        // return httpData.data.children.map(item => item.data);
+    }
+
+    formatCSV(data) {
+        if(!data.length)
+            return '';
+
+        const result = data.map(item => values(item).map(val => isFinite(val) ? val : `"${val}"`).join(','));
+
+        result.unshift(`"${keys(data[0]).join('","')}"`);
+
+        return result.join('\n');
+    }
+
+    formatSQL(data) {
+        if(!data.length)
+            return '';
+
+        const result = data.map(item => values(item).map(val => isFinite(val) ? val : `"${val}"`).join(','));
+
+        result.unshift(`"${keys(data[0]).join('","')}"`);
+
+        return result.join('\n');
     }
 }
 
