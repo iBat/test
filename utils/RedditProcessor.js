@@ -49,11 +49,23 @@ class RedditProcessor {
         if(!data.length)
             return '';
 
-        const result = data.map(item => values(item).map(val => isFinite(val) ? val : `"${val}"`).join(','));
+        const table = 'table';
+        const fieldsMap = {
+            id: 'id',
+            title: 'title',
+            created_utc: 'created_utc',
+            score: 'score'
+        };
+        const result = data.map(item =>
+            `(${keys(fieldsMap).map(key => {
+                const val = item[key];
+                return isFinite(val) ? val : `"${val.replace(/"/g, '""')}"`;
+            }).join(',')})`
+        );
 
-        result.unshift(`"${keys(data[0]).join('","')}"`);
+        result[0] = `INSERT INTO ${table} (${values(fieldsMap).join(',')}) VALUES\n${result[0]}`;
 
-        return result.join('\n');
+        return result.join(',\n');
     }
 }
 
