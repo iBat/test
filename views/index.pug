@@ -8,41 +8,70 @@ block content
       .form-group
           label(for="source") data source URL:
           input(name="source", value='https://www.reddit.com/r/javascript/.json')#source.form-control
-      .form-group
-          | Operation
-          .radio
-              label
-                  input(type="radio", name="operation", value="sort", checked="")
-                  |  sort
-          .radio
-              label
-                  input(type="radio", name="operation", value="aggregate")
-                  |  aggregate
-      .form-group
-          | Direction
-          .radio
-              label
-                  input(type="radio", name="direction", value="asc", checked="")
-                  |  asc
-          .radio
-              label
-                  input(type="radio", name="direction", value="desc")
-                  |  desc
-      .form-group
-          | Sort By
-          each fieldName in sortableFields
-              .radio
-                  label
-                      input(type="radio", name="field", value=fieldName, checked="")
-                      |  #{fieldName}
-      .form-group
-          | Format
-          .radio
-              label
-                  input(type="radio", name="format", value="CSV", checked="")
-                  |  CSV
-          .radio
-              label
-                  input(type="radio", name="format", value="SQL")
-                  |  SQL
+      .row
+          .col-md-4
+              .form-group
+                  | Operation
+                  .radio
+                      label
+                          input(type="radio", name="operation", value="sort", checked)
+                          |  sort
+                  .radio
+                      label
+                          input(type="radio", name="operation", value="aggregate")
+                          |  aggregate
+          .col-md-4
+              .form-group
+                  | Direction
+                  .radio
+                      label
+                          input(type="radio", name="direction", value="asc", checked)
+                          |  asc
+                  .radio
+                      label
+                          input(type="radio", name="direction", value="desc")
+                          |  desc
+          .col-md-4
+              .form-group
+                  | Sort By
+                  each fieldName in sortableFields
+                      .radio
+                          label
+                              input(type="radio", name="field", value=fieldName, checked)
+                              |  #{fieldName}
+      .row
+          .col-md-4
+              .form-group
+                  | Format
+                  .radio
+                      label
+                          input(type="radio", name="format", value="CSV", checked)
+                          |  CSV
+                  .radio
+                      label
+                          input(type="radio", name="format", value="SQL")
+                          |  SQL
+          .col-md-4
+              .form-group
+                  label(for="separator") CSV separator:
+                  input(name="separator", value=',')#separator.form-control
+      .row
+          .col-xs-12
+              .form-group
+                  label(for="table") SQL table name:
+                  input(name="table", value='table')#table.form-control
+      .row
+          .col-xs-12
+              label(for="mapping") SQL data map
+              table#mapping.table.table-striped.table-bordered
+                  thead
+                      th JSON field
+                      th SQL field
+                  tbody
+                      each fieldName in outputFields
+                          tr
+                              td= fieldName
+                              td
+                                input(name=`field-${fieldName}`, value=fieldName).form-control
+
       button(type="submit").btn.btn-primary Submit

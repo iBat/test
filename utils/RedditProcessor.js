@@ -16,31 +16,32 @@ class RedditProcessor {
     }
 
     async fetchData() {
-        return new Promise((resolve, reject) => {
-            fs.readFile('./json.json', (err, httpData) => {
-                if(err) {
-                    return reject(err);
-                }
-                resolve(JSON.parse(httpData).data.children.map(item => item.data));
-            });
-        })
+        // return new Promise((resolve, reject) => {
+        //     fs.readFile('./json.json', (err, httpData) => {
+        //         if(err) {
+        //             return reject(err);
+        //         }
+        //         resolve(JSON.parse(httpData).data.children.map(item => item.data));
+        //     });
+        // })
 
 
-        // const httpData = await request.get({
-        //     url: this.options.sourceUrl,
-        //     json: true
-        // });
+        const httpData = await request.get({
+            url: this.options.source,
+            json: true
+        });
 
-        // return httpData.data.children.map(item => item.data);
+        return httpData.data.children.map(item => item.data);
     }
 
     formatCSV(data) {
         if(!data.length)
             return '';
 
-        const result = data.map(item => values(item).map(val => isFinite(val) ? val : `"${val}"`).join(','));
+        const separator = this.options.separator;
+        const result = data.map(item => values(item).map(val => isFinite(val) ? val : `"${val}"`).join(separator));
 
-        result.unshift(`"${keys(data[0]).join('","')}"`);
+        result.unshift(`"${keys(data[0]).join(`"${separator}"`)}"`);
 
         return result.join('\n');
     }
@@ -50,12 +51,12 @@ class RedditProcessor {
             return '';
 
         const table = 'table';
-        const fieldsMap = {
-            id: 'id',
-            title: 'title',
-            created_utc: 'created_utc',
-            score: 'score'
-        };
+        const fieldsMap = {};
+
+        this.options.outputFields.forEach(fieldName => {
+            fieldsMap[fieldName] = this.options[`field-${fieldName}`];
+        });
+
         const result = data.map(item =>
             `(${keys(fieldsMap).map(key => {
                 const val = item[key];
